@@ -210,6 +210,7 @@ class suudoku:
         self.g_h = []
         self.g_s = [[0] * 3 for i in range(3)]
         self.wrong = False
+        self.blank = [9] * 10
         for i in range(9):
             self.g_v.append(Group_ver(i))
             self.g_h.append(Group_hol(i))
@@ -219,6 +220,7 @@ class suudoku:
 
     def set_data(self, x: int, y: int, data: int):
         self.num_data.set_data(x, y, data)
+        self.blank[data] -= 1
         if self.g_v[y].delete_poss(self.num_data, data):
             self.wrong = True
         if self.g_h[x].delete_poss(self.num_data, data):
@@ -239,6 +241,8 @@ class suudoku:
         for k in range(9):
             if self.wrong:
                 break
+            if self.blank[k+1] == 0:
+                continue
             for i in range(9):
                 if self.g_v[i].iscollect(self.num_data, k + 1):
                     is_change = False
@@ -259,7 +263,7 @@ class suudoku:
                         is_change = False
                         tmp = self.g_s[i][j].set_data(self.num_data, k + 1)
                         self.set_data(tmp[0], tmp[1], k + 1)
-
+        # 1マス当たりに数字が一個しか入らない場合の探索
         for i in range(9):
             if self.wrong:
                 break
